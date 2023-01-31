@@ -16,9 +16,10 @@ public class PiDigits {
      * Returns a range of hexadecimal digits of pi.
      * @param start The starting location of the range.
      * @param count The number of digits to return
+     * @param N number of threads 
      * @return An array containing the hexadecimal digits.
      */
-    public static byte[] getDigits(int start, int count) {
+    public static byte[] getDigits(int start, int count, int N) {
         if (start < 0) {
             throw new RuntimeException("Invalid Interval");
         }
@@ -41,7 +42,9 @@ public class PiDigits {
             }
 
             sum = 16 * (sum - Math.floor(sum));
+            System.out.println(sum);
             digits[i] = (byte) sum;
+            System.out.println(digits[i]);
         }
 
         return digits;

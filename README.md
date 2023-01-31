@@ -63,6 +63,8 @@ Entregar: Fuentes y documento PDF con las respuestas.
 	```
 	![](img/ThreadsWithRun.png)
 
+	**La diferencia entre utilizar el método start() y el método run() es que  
+
 
 **Parte II Hilos Java**
 
