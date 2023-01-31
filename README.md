@@ -11,7 +11,7 @@ Entregar: Fuentes y documento PDF con las respuestas.
 
 1. De acuerdo con lo revisado en las lecturas, complete las clases CountThread, para que las mismas definan el ciclo de vida de un hilo que imprima por pantalla los números entre A y B.
 
-'''java
+```java
 	public class CountThread extends Thread {
 	private final int in;
 	private final int out;
@@ -27,7 +27,7 @@ Entregar: Fuentes y documento PDF con las respuestas.
 			System.out.println(i);
 		}
 	}
-	'''
+```
 2. Complete el método __main__ de la clase CountMainThreads para que:
 	1. Cree 3 hilos de tipo CountThread, asignándole al primero el intervalo [0..99], al segundo [99..199], y al tercero [200..299].
 	2. Inicie los tres hilos con 'start()'.
