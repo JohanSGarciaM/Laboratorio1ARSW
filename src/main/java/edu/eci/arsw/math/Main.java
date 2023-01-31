@@ -14,13 +14,26 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String a[]) {
-        PiDigits.getDigits(0, 10, 2);
         
         //System.out.println(bytesToHex(PiDigits.getDigits(1, 100)));//
         //System.out.println(bytesToHex(PiDigits.getDigits(1, 1000000)));//
     }
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    
+    //En Proceso
+    //
+    //
+    //Necesito conocer en main el numero de digitos a averiguar y el numero de hilos
+    //Luego dividir la cantidad de digitos entre los hilos
+    //Luego orquestar todos los hilos con estos valores incluyendo join(), el join va aqui
+    
+    public void solution(int N) {
+    	for (int threads = 0; i <N ; i++ ) {
+    		ThreadCalculate threadn = new ThreadCalculate()
+    				
+    	}
+    }
 
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];

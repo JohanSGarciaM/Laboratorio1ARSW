@@ -19,7 +19,7 @@ public class PiDigits {
      * @param N number of threads 
      * @return An array containing the hexadecimal digits.
      */
-    public static byte[] getDigits(int start, int count, int N) {
+    public static byte[] getDigits(int start, int count) {
         if (start < 0) {
             throw new RuntimeException("Invalid Interval");
         }
@@ -42,9 +42,7 @@ public class PiDigits {
             }
 
             sum = 16 * (sum - Math.floor(sum));
-            System.out.println(sum);
             digits[i] = (byte) sum;
-            System.out.println(digits[i]);
         }
 
         return digits;

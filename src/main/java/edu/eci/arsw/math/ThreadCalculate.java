@@ -11,16 +11,16 @@ public class ThreadCalculate extends Thread{
 	private final int last;
 	private final int threads;
 	
-	public ThreadCalculate(int a, int b, int N) {
+	public ThreadCalculate(int a, int b) {
 		this.start = a;
 		this.last = b;
-		this.threads = N;
+		this.threads = 0;
 	}
 	
 	@Override
 	public void run() {
 		byte[] digits;
-		digits = PiDigits.getDigits(start, last, threads );
+		digits = PiDigits.getDigits(start, last);
 		
 	}
 	
