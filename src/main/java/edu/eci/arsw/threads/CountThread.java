@@ -10,19 +10,17 @@ package edu.eci.arsw.threads;
  * @author hcadavid
  */
 public class CountThread extends Thread {
-	private final int A;
-	private final int B;
-	private Thread t;
+	private final int in;
+	private final int out;
 	
 	public CountThread(int in, int out) {
-		this.A = in;
-		this.B = out;
-		
+		this.in = in;
+		this.out = out;	
 	}
     
 	@Override
 	public void run() {
-		for (int i = A; i <= B; i++) {
+		for (int i = in; i <= out; i++) {
 			System.out.println(i);
 		}
 	}
