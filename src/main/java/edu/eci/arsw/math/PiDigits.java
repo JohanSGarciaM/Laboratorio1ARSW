@@ -132,18 +132,52 @@ public class PiDigits {
         return result;
     }
 
-
-
-
-	public void Orchestor() {
+    
+//    Orquestador de hilos que realiza el inicio del proceso para cada uno y al final retorna el resultado en hexadecimal
+    public String Orchestor() throws InterruptedException {
 		ThreadCalculate threads[] = new ThreadCalculate[N];
-		for (int i=0; i<N ; i++) {
-			long start = i * digits/N;
-			threads[i] = new ThreadCalculate(Integer.toString(i),(int)start, (int)this.EachThread[i]);
-			threads[i].start();	
+		String result = "";
+		for (int thread=0; thread<N ; thread++) {
+			long start = thread * digits/N;
+			threads[thread] = new ThreadCalculate(Integer.toString(thread+1),(int)start, (int)this.EachThread[thread]);
+			threads[thread].start();
+			
+			threads[thread].join();
+			String toHex = threads[thread].getResult();
+			System.out.println("Thread number " + threads[thread].getNameOfThread()+" : "+toHex);
+			result = result + toHex;
+			
 		}
+		
+		System.out.println(result);
+		
+		return result;
 		
 		
 	}
+	
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    
+    //En Proceso
+    //
+    //
+    //Necesito conocer en main el numero de digitos a averiguar y el numero de hilos
+    //Luego dividir la cantidad de digitos entre los hilos
+    //Luego orquestar todos los hilos con estos valores incluyendo join(), el join va aqui
+    
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        StringBuilder sb=new StringBuilder();
+        for (int i=0;i<hexChars.length;i=i+2){
+            //sb.append(hexChars[i]);
+            sb.append(hexChars[i+1]);            
+        }
+        return sb.toString();
+    }
 
 }
