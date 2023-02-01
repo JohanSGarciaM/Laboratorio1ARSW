@@ -10,11 +10,32 @@ public class PiDigits {
 
     private static int DigitsPerSum = 8;
     private static double Epsilon = 1e-17;
+    private int N = 0;
+    private final int[] EachThread;
+    private int digits = 0;
+    
+    
+    public PiDigits(int digits,int N) {
+    	this.N = N;
+    	this.digits = digits;
+    	this.EachThread = new int[N];
+    	int div = digits / N;
+    	int mod = digits % N;
+    	for(int i = 0; i < N; i++) {
+    		if(i+1 == N) {
+    			this.EachThread[i]=div+mod;
+    		}else {
+    			this.EachThread[i]=div;
+    		}
+    	}
+    }
+
+    
 
     
     /**
      * Returns a range of hexadecimal digits of pi.
-     * @param start The starting location of the range.
+     * @param start The starting location of the range.6
      * @param count The number of digits to return
      * @param N number of threads 
      * @return An array containing the hexadecimal digits.
@@ -110,5 +131,19 @@ public class PiDigits {
 
         return result;
     }
+
+
+
+
+	public void Orchestor() {
+		ThreadCalculate threads[] = new ThreadCalculate[N];
+		for (int i=0; i<N ; i++) {
+			long start = i * digits/N;
+			threads[i] = new ThreadCalculate(Integer.toString(i),(int)start, (int)this.EachThread[i]);
+			threads[i].start();	
+		}
+		
+		
+	}
 
 }
