@@ -1,5 +1,7 @@
 package edu.eci.arsw.math;
 
+import java.util.ArrayList;
+
 ///  <summary>
 ///  An implementation of the Bailey-Borwein-Plouffe formula for calculating hexadecimal
 ///  digits of pi.
@@ -13,26 +15,24 @@ public class PiDigits {
     private int N = 0;
     private final int[] EachThread;
     private int digits = 0;
+    private ArrayList<String> resultsHex = new ArrayList<String>();
     
     
     public PiDigits(int digits,int N) {
     	this.N = N;
     	this.digits = digits;
     	this.EachThread = new int[N];
-    	int div = digits / N;
-    	int mod = digits % N;
+    	int pair = digits / N;
+    	int odd = digits % N;
     	for(int i = 0; i < N; i++) {
     		if(i+1 == N) {
-    			this.EachThread[i]=div+mod;
+    			this.EachThread[i]=pair+odd;
     		}else {
-    			this.EachThread[i]=div;
+    			this.EachThread[i]=pair;
     		}
     	}
     }
 
-    
-
-    
     /**
      * Returns a range of hexadecimal digits of pi.
      * @param start The starting location of the range.6
@@ -144,6 +144,7 @@ public class PiDigits {
 			
 			threads[thread].join();
 			String toHex = threads[thread].getResult();
+			this.resultsHex.add(toHex);
 			System.out.println("Thread number " + threads[thread].getNameOfThread()+" : "+toHex);
 			result = result + toHex;
 			
@@ -156,14 +157,12 @@ public class PiDigits {
 		
 	}
 	
-	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+//    función que retorna el numero de hilos utilizado en la instancia actual
+    public int ThreadsAmount() {
+    	return this.resultsHex.size();
+    }
     
-    //En Proceso
-    //
-    //
-    //Necesito conocer en main el numero de digitos a averiguar y el numero de hilos
-    //Luego dividir la cantidad de digitos entre los hilos
-    //Luego orquestar todos los hilos con estos valores incluyendo join(), el join va aqui
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];

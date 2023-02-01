@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String a[]){
     	//La cantidad de digitos a evaluar es 10 y el número de hilos es 3
-    	PiDigits Example1 = new PiDigits(10,3);
+    	PiDigits Example1 = new PiDigits(20,1);
     	try {
 			Example1.Orchestor();
 		} catch (InterruptedException e) {
@@ -26,8 +26,4 @@ public class Main {
     	//PiDigits Example2 = new PiDigits(1000000,500);
     	//Example2.Orchestor();
     }
-
-
-	
-
 }

@@ -73,8 +73,219 @@ La fórmula [BBP](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93P
 Para este ejercicio se quiere calcular, en el menor tiempo posible, y en una sola máquina (aprovechando las características multi-core de la mismas) al menos el primer millón de dígitos de PI (en base 16). Para esto
 
 1. Cree una clase de tipo Thread que represente el ciclo de vida de un hilo que calcule una parte de los dígitos requeridos.
+**Solución**
+
+El constructor de la clase ThreadCalculate recibe tres parámetros, los cuales son el nombre o numero de thread ***(NameOfThread)***  que utilizamos para poder identificar cada Hilo y su resultado, además de el valor entero ***(a)*** que indica el punto de partida del hilo y el valor entero ***(b)*** que indica el final o número de valores que el hilo debe ocupar
+```java
+	public class ThreadCalculate extends Thread{
+		
+		private final int start;
+		private final int last;
+		private String thread;
+		private String result;
+		
+		public ThreadCalculate(String NameOfThread ,int a, int b) {
+			this.start = a;
+			this.last = b;
+			this.thread = NameOfThread;
+		}
+		
+		@Override
+		public void run() {
+	//		Iniciamos un nuevo grupo de digitos vacío
+			byte[] digits;
+	//		invocamos la función que obtiene los digitos dado un rango y el resultado lo guardamos en el array creado antes
+			digits = PiDigits.getDigits(start, last);
+	//		En la variable result guardamos el resultado de cambiar este valor de digitos a hexadecimal
+			this.result = PiDigits.bytesToHex(digits);
+		}	
+```
 2. Haga que la función PiDigits.getDigits() reciba como parámetro adicional un valor N, correspondiente al número de hilos entre los que se va a paralelizar la solución. Haga que dicha función espere hasta que los N hilos terminen de resolver el problema para combinar las respuestas y entonces retornar el resultado. Para esto, revise el método [join](https://docs.oracle.com/javase/tutorial/essential/concurrency/join.html) del API de concurrencia de Java.
+
+**Solución**
+
+Para realizar este ejercicio utilizamos la clase ***PiDigits***  Como orquestador , enviandole al constructor el parámetro N Que indica la cantidad de hilos que debe utilizar el programa y así creamos una clase aparte ***(Orchestor())*** El cual se encarga de crear todos los hilos y arrancarlos así obteniendo y retornando el resultado esperado
+
+```java
+	package edu.eci.arsw.math;
+
+	///  <summary>
+	///  An implementation of the Bailey-Borwein-Plouffe formula for calculating hexadecimal
+	///  digits of pi.
+	///  https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula
+	///  *** Translated from C# code: https://github.com/mmoroney/DigitsOfPi ***
+	///  </summary>
+	public class PiDigits {
+
+		private static int DigitsPerSum = 8;
+		private static double Epsilon = 1e-17;
+		private int N = 0;
+		private final int[] EachThread;
+		private int digits = 0;
+		
+		
+		public PiDigits(int digits,int N) {
+			this.N = N;
+			this.digits = digits;
+			this.EachThread = new int[N];
+			int pair = digits / N;
+			int odd = digits % N;
+			for(int i = 0; i < N; i++) {
+				if(i+1 == N) {
+					this.EachThread[i]=pair+odd;
+				}else {
+					this.EachThread[i]=pair;
+				}
+			}
+		}
+
+		/**
+		* Returns a range of hexadecimal digits of pi.
+		* @param start The starting location of the range.6
+		* @param count The number of digits to return
+		* @param N number of threads 
+		* @return An array containing the hexadecimal digits.
+		*/
+		public static byte[] getDigits(int start, int count) {
+			if (start < 0) {
+				throw new RuntimeException("Invalid Interval");
+			}
+
+			if (count < 0) {
+				throw new RuntimeException("Invalid Interval");
+			}
+
+			byte[] digits = new byte[count];
+			double sum = 0;
+
+			for (int i = 0; i < count; i++) {
+				if (i % DigitsPerSum == 0) {
+					sum = 4 * sum(1, start)
+							- 2 * sum(4, start)
+							- sum(5, start)
+							- sum(6, start);
+
+					start += DigitsPerSum;
+				}
+
+				sum = 16 * (sum - Math.floor(sum));
+				digits[i] = (byte) sum;
+			}
+
+			return digits;
+		}
+
+		/// <summary>
+		/// Returns the sum of 16^(n - k)/(8 * k + m) from 0 to k.
+		/// </summary>
+		/// <param name="m"></param>
+		/// <param name="n"></param>
+		/// <returns></returns>
+		private static double sum(int m, int n) {
+			double sum = 0;
+			int d = m;
+			int power = n;
+
+			while (true) {
+				double term;
+
+				if (power > 0) {
+					term = (double) hexExponentModulo(power, d) / d;
+				} else {
+					term = Math.pow(16, power) / d;
+					if (term < Epsilon) {
+						break;
+					}
+				}
+
+				sum += term;
+				power--;
+				d += 8;
+			}
+
+			return sum;
+		}
+
+		/// <summary>
+		/// Return 16^p mod m.
+		/// </summary>
+		/// <param name="p"></param>
+		/// <param name="m"></param>
+		/// <returns></returns>
+		private static int hexExponentModulo(int p, int m) {
+			int power = 1;
+			while (power * 2 <= p) {
+				power *= 2;
+			}
+
+			int result = 1;
+
+			while (power > 0) {
+				if (p >= power) {
+					result *= 16;
+					result %= m;
+					p -= power;
+				}
+
+				power /= 2;
+
+				if (power > 0) {
+					result *= result;
+					result %= m;
+				}
+			}
+
+			return result;
+		}
+
+		
+	//    Orquestador de hilos que realiza el inicio del proceso para cada uno y al final retorna el resultado en hexadecimal
+		public String Orchestor() throws InterruptedException {
+			ThreadCalculate threads[] = new ThreadCalculate[N];
+			String result = "";
+			for (int thread=0; thread<N ; thread++) {
+				long start = thread * digits/N;
+				threads[thread] = new ThreadCalculate(Integer.toString(thread+1),(int)start, (int)this.EachThread[thread]);
+				threads[thread].start();
+				
+				threads[thread].join();
+				String toHex = threads[thread].getResult();
+				System.out.println("Thread number " + threads[thread].getNameOfThread()+" : "+toHex);
+				result = result + toHex;
+				
+			}
+			
+			System.out.println(result);
+			
+			return result;
+			
+			
+		}
+		
+		private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+		
+		public static String bytesToHex(byte[] bytes) {
+			char[] hexChars = new char[bytes.length * 2];
+			for (int j = 0; j < bytes.length; j++) {
+				int v = bytes[j] & 0xFF;
+				hexChars[j * 2] = hexArray[v >>> 4];
+				hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+			}
+			StringBuilder sb=new StringBuilder();
+			for (int i=0;i<hexChars.length;i=i+2){
+				//sb.append(hexChars[i]);
+				sb.append(hexChars[i+1]);            
+			}
+			return sb.toString();
+		}
+
+	}
+```
+**Lo Único que se cambió de esta clase fue que se agregó el constructor que recibe la variable N y se agrego el método (Orchestor) y el método (bytesToHex) que existía en la clase main**
+
 3. Ajuste las pruebas de JUnit, considerando los casos de usar 1, 2 o 3 hilos (este último para considerar un número impar de hilos!)
+
+
 
 
 **Parte III Evaluación de Desempeño**
