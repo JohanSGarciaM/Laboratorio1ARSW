@@ -114,4 +114,96 @@ public class PiCalcTest {
 		}
     	assertEquals(expected,result);
     }
+    
+//    Cálculo de tiempos para el punto 3
+    
+    @Test
+//    Para este experimento vamos a utilizar un solo hilo para el calculo de 1 millón de dígitos
+//    Vamos a hacer un caso por default exitoso y el fin es solo imprimir el tiempo 
+    public void time1() {
+	    System.out.println("Test 1 Thread");
+	    int value = 1;
+	    long start = System.nanoTime();
+	    PiDigits timeTest1 = new PiDigits(1000000,1);
+	    try {
+			timeTest1.Orchestor();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    long end = System.nanoTime();
+	    long totalTime = end - start;
+	    System.out.println("The total time of the process is " + Long.toString(totalTime));
+	    assertEquals(1,value);
+	    
+    }
+    
+    @Test
+//  Para este experimento vamos a utilizar la cantidad de procesadores disponibles para el cálculo de 1 millón de dígitos
+//  Vamos a hacer un caso por default exitoso y el fin es solo imprimir el tiempo 
+  public void time2() {
+	    System.out.println("Test 2 Thread");
+	    int value = 1;
+	    long start = System.nanoTime();
+	    Runtime runtime = Runtime.getRuntime();
+	    int processors = runtime.availableProcessors();
+	    PiDigits timeTest2 = new PiDigits(1000000,processors);
+	    try {
+			timeTest2.Orchestor();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    long end = System.nanoTime();
+	    long totalTime = end - start;
+	    System.out.println("The total time of the process is " + Long.toString(totalTime));
+	    assertEquals(1,value);
+	    
+  }
+    
+    @Test
+//  Para este experimento vamos a utilizar el doble de la cantidad de procesadores disponibles para el cálculo de 1 millón de dígitos
+//  Vamos a hacer un caso por default exitoso y el fin es solo imprimir el tiempo 
+  public void time3() {
+	    System.out.println("Test 3 Thread");
+	    int value = 1;
+	    long start = System.nanoTime();
+	    Runtime runtime = Runtime.getRuntime();
+	    int processors = runtime.availableProcessors();
+	    PiDigits timeTest3 = new PiDigits(1000000,processors*2);
+	    try {
+			timeTest3.Orchestor();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    long end = System.nanoTime();
+	    long totalTime = end - start;
+	    System.out.println("The total time of the process is " + Long.toString(totalTime));
+	    assertEquals(1,value);
+	    
+  }
+    
+    @Test
+//  Para este experimento vamos a utilizar 200 hilos para el cálculo de 1 millón de dígitos
+//  Vamos a hacer un caso por default exitoso y el fin es solo imprimir el tiempo 
+  public void time4() {
+	    System.out.println("Test 4 Thread");
+	    int value = 1;
+	    long start = System.nanoTime();
+	    PiDigits timeTest4 = new PiDigits(1000000,200);
+	    try {
+			timeTest4.Orchestor();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    long end = System.nanoTime();
+	    long totalTime = end - start;
+	    System.out.println("The total time of the process is " + Long.toString(totalTime));
+	    assertEquals(1,value);
+	    
+  }
+    
+    
 }
